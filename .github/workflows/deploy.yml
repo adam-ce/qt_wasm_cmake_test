@@ -21,9 +21,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qtarch: android_arm64_v8a
-        qttarget: 'android'
-        qtmodules: 'qtcharts qtpositioning'
+        qtarch: [android_arm64_v8a]
+        qttarget: ['android']
+        qtmodules: ['qtcharts qtpositioning']
         cmake_version: ['3.29.x', '3.30.x', '3.31.x']
         qtversion: ['6.8.1', '6.9.0']
           
@@ -120,10 +120,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: wasm_medium
-        qtflags: '-release -optimize-size -submodules qtdeclarative,qtbase -skip qtlanguageserver,qtquicktimeline,qtimageformats -make libs -gui -no-feature-thread'
-        cmakeflags: ''
-        compile_env: ''
+        config: [wasm_medium]
+        qtflags: ['-release -optimize-size -submodules qtdeclarative,qtbase -skip qtlanguageserver,qtquicktimeline,qtimageformats -make libs -gui -no-feature-thread']
+        cmakeflags: ['']
+        compile_env: ['']
         cmake_version: ['3.29.x', '3.30.x', '3.31.x']
         include:
           - qtversion: '6.8.1'
