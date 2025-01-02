@@ -21,12 +21,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        qtarch: android_arm64_v8a
+        qttarget: 'android'
+        qtmodules: 'qtcharts qtpositioning'
         cmake_version: ['3.29.x', '3.30.x', '3.31.x']
-        include:
-          - qtarch: android_arm64_v8a
-            qttarget: 'android'
-            qtversion: '6.8.1'
-            qtmodules: 'qtcharts qtpositioning'
+        qtversion: ['6.8.1', '6.9.0']
           
     steps:
     - name: Install dependencies
@@ -105,7 +104,7 @@ jobs:
         -DQT_HOST_PATH=${QT_HOST_ROOT_DIR}
         -DCMAKE_BUILD_TYPE=Release
         ${{ matrix.additional_cmake_flags }}
-        -S ${{ github.workspace }}/MaterialTester
+        -S ${{ github.workspace }}
 
     - name: Build
       run: |
@@ -121,14 +120,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        config: wasm_medium
+        qtflags: '-release -optimize-size -submodules qtdeclarative,qtbase -skip qtlanguageserver,qtquicktimeline,qtimageformats -make libs -gui -no-feature-thread'
+        cmakeflags: ''
+        compile_env: ''
         cmake_version: ['3.29.x', '3.30.x', '3.31.x']
         include:
-          - config: wasm_medium
-            qtflags: '-release -optimize-size -submodules qtdeclarative,qtbase -skip qtlanguageserver,qtquicktimeline,qtimageformats -make libs -gui -no-feature-thread'
-            cmakeflags: ''
-            compile_env: ''
-            qtversion: '6.8.1'
+          - qtversion: '6.8.1'
             webassembly_version: "3.1.56"
+          - qtversion: '6.9'
+            webassembly_version: "3.1.74"
             
     steps:
     - name: Install dependencies
@@ -208,7 +209,7 @@ jobs:
         -DCMAKE_BUILD_TYPE=MinSizeRel
         -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR
         ${{ matrix.cmakeflags }}
-        -S ${{ github.workspace }}/MaterialTester && cat $BUILD_DIR/build.ninja
+        -S ${{ github.workspace }}
 
     - name: Build
       run: |
