@@ -21,9 +21,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qtarch: [android_arm64_v8a]
-        qttarget: ['android']
-        qtmodules: ['qtcharts qtpositioning']
         cmake_version: ['3.29.x', '3.30.x', '3.31.x']
         qtversion: ['6.8.1', '6.9.0']
           
@@ -66,11 +63,11 @@ jobs:
         aqtversion: '==3.1.*'
         version: ${{ matrix.qtversion }}
         host: linux
-        target: ${{ matrix.qttarget }}
-        arch: ${{ matrix.qtarch }}
+        target: 'android'
+        arch: android_arm64_v8a
         dir: '${{github.workspace}}/qt'
         install-deps: 'true'
-        modules: ${{ matrix.qtmodules }}
+        modules: 'qtcharts qtpositioning'
         cache: true
 
     - name: Make qt cross binaries executable
@@ -86,7 +83,7 @@ jobs:
         echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
         echo "APK_TARGET=$APK_TARGET" >> $GITHUB_ENV
         
-        echo "INSTALL_DIR=${{ github.workspace }}/install/${{ matrix.qtarch }}" >> $GITHUB_ENV
+        echo "INSTALL_DIR=${{ github.workspace }}/install/android_arm64_v8a" >> $GITHUB_ENV
         echo "APK_DIR=$BUILD_DIR/android-build/build/outputs/apk/" >> $GITHUB_ENV
         echo "ANDROID_BUILD_DIR=$BUILD_DIR/android-build/" >> $GITHUB_ENV
         echo "DEPLOYMENT_SETTINGS=$BUILD_DIR/android-$APK_TARGET-deployment-settings.json" >> $GITHUB_ENV
@@ -120,11 +117,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [wasm_medium]
-        qtflags: ['-release -optimize-size -submodules qtdeclarative,qtbase -skip qtlanguageserver,qtquicktimeline,qtimageformats -make libs -gui -no-feature-thread']
-        cmakeflags: ['']
-        compile_env: ['']
         cmake_version: ['3.29.x', '3.30.x', '3.31.x']
+        qtversion: ['6.8.1', '6.9']
         include:
           - qtversion: '6.8.1'
             webassembly_version: "3.1.56"
@@ -168,12 +162,10 @@ jobs:
       shell: bash
       run: |
         echo "BUILD_DIR=$(pwd)/build" >> $GITHUB_ENV
-        echo "INSTALL_DIR=install/${{ matrix.config}}" >> $GITHUB_ENV
+        echo "INSTALL_DIR=install" >> $GITHUB_ENV
         echo "QT_WASM_ROOT_DIR=$(pwd)/qt_wasm_lite" >> $GITHUB_ENV
         echo "QT_SRC_CONFIGURE=$(pwd)/qt_src/configure" >> $GITHUB_ENV
         echo "QT_LITE_CONFIG=$(pwd)/misc/qt_lite.txt" >> $GITHUB_ENV
-        #echo "QT_CMAKE=${{github.workspace}}/qt_host/Qt/Tools/CMake/bin/cmake" >> $GITHUB_ENV
-        echo -e "${{matrix.compile_env}}" >> $GITHUB_ENV
         cd ${{github.workspace}}/qt_host/Qt/ && ls
       
     - name: Versions
@@ -194,7 +186,7 @@ jobs:
       shell: bash
       run: |
         cd qt_wasm_build
-        ${{env.QT_SRC_CONFIGURE}} -qt-host-path $QT_ROOT_DIR -platform wasm-emscripten ${{ matrix.qtflags }} -prefix "${QT_WASM_ROOT_DIR}/" 
+        ${{env.QT_SRC_CONFIGURE}} -qt-host-path $QT_ROOT_DIR -platform wasm-emscripten -release -optimize-size -submodules qtdeclarative,qtbase -skip qtlanguageserver,qtquicktimeline,qtimageformats -make libs -gui -no-feature-thread -prefix "${QT_WASM_ROOT_DIR}/" 
         cmake --build . --parallel && cmake --install .
         # Fail if the directory is not created or is empty
         [ -d "$QT_WASM_ROOT_DIR" ] && [ "$(ls -A $QT_WASM_ROOT_DIR)" ] || exit 1
@@ -208,7 +200,6 @@ jobs:
         -B $BUILD_DIR
         -DCMAKE_BUILD_TYPE=MinSizeRel
         -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR
-        ${{ matrix.cmakeflags }}
         -S ${{ github.workspace }}
 
     - name: Build
