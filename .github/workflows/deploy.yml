@@ -181,6 +181,17 @@ jobs:
         mkdir qt_wasm_build
         cd qt_wasm_build
         $QT_SRC_CONFIGURE -qt-host-path $QT_ROOT_DIR -platform wasm-emscripten -init-submodules -submodules qtdeclarative,qtbase -skip qtlanguageserver,qtquicktimeline,qtimageformats
+        cd ../qt_src/qtdeclarative/
+        git fetch https://codereview.qt-project.org/qt/qtdeclarative refs/changes/10/659910/6 && git checkout FETCH_HEAD
+        # cd ../..
+        
+        # rm -rf qt_wasm_build
+        # mkdir qt_wasm_build
+        # cd qt_wasm_build
+        # $QT_SRC_CONFIGURE -qt-host-path $QT_ROOT_DIR -platform wasm-emscripten -init-submodules -submodules qtdeclarative,qtbase -skip qtlanguageserver,qtquicktimeline,qtimageformats
+        # cd ../qt_src/qtdeclarative/
+        # git log
+        
         
     - name: Build Qt for Webassembly (custom version)
       shell: bash
@@ -190,6 +201,8 @@ jobs:
         cmake --build . --parallel && cmake --install .
         # Fail if the directory is not created or is empty
         [ -d "$QT_WASM_ROOT_DIR" ] && [ "$(ls -A $QT_WASM_ROOT_DIR)" ] || exit 1
+        cd ../qt_src/qtdeclarative/
+        git log
       
     - name: Configure
       env:
