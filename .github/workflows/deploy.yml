@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         cmake_version: ['3.29.x', '3.30.x', '3.31.x']
-        qtversion: ['6.8.1', '6.9.0', '6.10.0']
+        qtversion: ['6.8.1', '6.9.1', '6.10']
           
     steps:
     - name: Install dependencies
@@ -118,7 +118,7 @@ jobs:
       fail-fast: false
       matrix:
         cmake_version: ['3.29.x', '3.30.x', '3.31.x']
-        qtversion: ['6.8.1', '6.9.1', '6.10.0']
+        qtversion: ['6.8.1', '6.9.1', '6.10']
         include:
           - qtversion: '6.8.1'
             webassembly_version: "3.1.56"
