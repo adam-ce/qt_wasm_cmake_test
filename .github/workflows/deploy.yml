@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         cmake_version: ['3.29.x', '3.30.x', '3.31.x']
-        qtversion: ['6.8.1', '6.9.1', '6.10']
+        qtversion: ['6.8.1', '6.9.1', '6.10.0']
           
     steps:
     - name: Install dependencies
@@ -121,10 +121,13 @@ jobs:
         qtversion: ['6.8.1', '6.9.1', '6.10']
         include:
           - qtversion: '6.8.1'
+            host_qt_version: '6.8.1'
             webassembly_version: "3.1.56"
           - qtversion: '6.9.1'
+            host_qt_version: '6.9.1'
             webassembly_version: "3.1.70"
-          - qtversion: '6.10.0'
+          - qtversion: '6.10'
+            host_qt_version: '6.10.0'
             webassembly_version: "4.0.7"
             
     steps:
@@ -151,7 +154,7 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         aqtversion: '==3.1.*'
-        version: ${{matrix.qtversion}}
+        version: ${{matrix.host_qt_version}}
         host: linux
         target: 'desktop'
         arch: linux_gcc_64
